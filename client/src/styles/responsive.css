@@ -1,0 +1,124 @@
+/* ==========================================================================
+   Responsive: tablet and phone adjustments (must load last)
+   ========================================================================== */
+
+@media (max-width: 1100px) {
+  .stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  /* Sidebar becomes a slide-in drawer */
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 260px;
+    z-index: 80;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    box-shadow: var(--shadow-pop);
+  }
+
+  .sidebar.open {
+    transform: none;
+  }
+
+  .scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 12, 20, 0.45);
+    z-index: 70;
+  }
+
+  .topbar {
+    padding: 0.5rem 1rem;
+  }
+
+  .topbar .menu-btn {
+    display: inline-flex;
+  }
+
+  .topbar .user-email {
+    display: none;
+  }
+
+  .content {
+    padding: 1.25rem 1rem 3rem;
+  }
+
+  .grid-2,
+  .split,
+  .features {
+    grid-template-columns: 1fr;
+  }
+
+  .detail {
+    position: static;
+  }
+
+  /* Message rows stack subject under sender */
+  .msg {
+    grid-template-columns: 8px minmax(0, 1fr) auto;
+  }
+
+  .msg .subj {
+    grid-column: 2 / -1;
+    grid-row: 2;
+  }
+
+  .prio {
+    grid-template-columns: 40px minmax(0, 1fr);
+  }
+
+  .prio-actions {
+    grid-column: 2;
+    opacity: 1;
+  }
+
+  .rule {
+    grid-template-columns: 1fr;
+  }
+
+  .compose-row {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+
+  .compose-row > .label {
+    padding-top: 0;
+  }
+
+  .hero {
+    padding: 3rem 0 2.5rem;
+  }
+
+  .hero h1 {
+    font-size: 1.9rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .checks {
+    grid-template-columns: 1fr;
+  }
+
+  .toasts {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+  }
+
+  .toast {
+    width: 100%;
+  }
+}

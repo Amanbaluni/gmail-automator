@@ -1,0 +1,24 @@
+{
+  "name": "gmail-automator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MERN Gmail automation app: rules, auto-reply, scheduled send, bulk cleaner",
+  "scripts": {
+    "server": "node server/dev.js",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix client install && npm --prefix client run build"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "googleapis": "^189.0.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.6.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
