@@ -106,6 +106,9 @@ h3 { font-size: 1.05rem; font-weight: 750; }
 
 p { margin: 0 0 0.75rem; }
 
+button, a, select, summary, [role="button"], [role="tab"] { touch-action: manipulation; }
+.btn.back-btn { display: none; }
+
 a { color: var(--brand); text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; }
 a:hover { text-decoration-thickness: 2px; }
 

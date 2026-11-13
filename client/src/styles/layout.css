@@ -15,10 +15,12 @@
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   padding: 1.1rem 0 0.9rem;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .brand {

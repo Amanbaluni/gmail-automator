@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Icon } from '../icons.jsx';
 import { ListSkeleton, fmtFull } from '../ui.jsx';
 
 // Reading pane shared by the Inbox and Priority pages
 export default function MessageView({ msg, onClose, onAction, onReply, extraActions }) {
+  // On phones the message replaces the list, so start at the top of it
+  useEffect(() => { if (window.matchMedia('(max-width: 860px)').matches) window.scrollTo({ top: 0 }); }, [msg.id]);
   const trashed = msg.labelIds?.includes('TRASH');
   const frameStyle = '<base target="_blank"><style>body{font-family:system-ui,sans-serif;font-size:14px;margin:12px;word-wrap:break-word}img{max-width:100%;height:auto}</style>';
   return (
     <div className="card detail">
+      <button className="btn btn-sm btn-ghost back-btn" onClick={onClose}><Icon name="back" size={15} />Back to list</button>
       <div className="row between" style={{ alignItems: 'flex-start' }}>
         <h2>{msg.subject}</h2>
         <button className="btn btn-ghost btn-icon btn-sm" onClick={onClose} aria-label="Close message"><Icon name="close" size={16} /></button>

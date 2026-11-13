@@ -53,3 +53,95 @@
   .toasts { left: 0.75rem; right: 0.75rem; bottom: 0.75rem; max-width: none; }
   td, th { padding-left: 0.7rem; padding-right: 0.7rem; }
 }
+
+/* ==========================================================================
+   Mobile refinements
+   ========================================================================== */
+
+/* Tablets: keep the split reading pane readable */
+@media (min-width: 861px) and (max-width: 1100px) {
+  .split { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
+  .content { padding: 1.75rem 1.5rem 3rem; }
+  .split .msg { grid-template-columns: 10px minmax(0, 1fr) auto; }
+}
+
+@media (max-width: 860px) {
+  /* 16px inputs stop iOS Safari zooming the page on focus */
+  input, select, textarea { font-size: 16px; }
+  .search input { font-size: 16px; }
+
+  /* Safe areas for notched phones */
+  .mobilebar { padding-top: max(0.5rem, env(safe-area-inset-top)); padding-left: max(0.75rem, env(safe-area-inset-left)); }
+  .content { padding-bottom: max(3rem, calc(env(safe-area-inset-bottom) + 2rem)); }
+  .sidebar { padding-top: max(1.1rem, env(safe-area-inset-top)); padding-bottom: max(0.9rem, env(safe-area-inset-bottom)); }
+  .toasts { bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+
+  /* An opened message takes over the screen; the list returns on Back */
+  .split > :first-child { display: none; }
+  .btn.back-btn { display: inline-flex; margin: -0.35rem 0 0.6rem -0.5rem; }
+  .detail { border-top-width: 3px; }
+  .detail > .row > .btn-icon { display: none; }
+  .detail h2 { font-size: 1.3rem; }
+  .mail-frame { height: 60vh; }
+
+  /* Page header actions sit under the title and fill the width cleanly */
+  .page-head { align-items: flex-start; }
+  .page-actions { width: 100%; }
+  .page-head > .btn { align-self: flex-start; }
+
+  /* Controls that were too wide scroll or wrap instead of overflowing */
+  .segmented { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .segmented::-webkit-scrollbar { display: none; }
+  .segmented button { flex: none; white-space: nowrap; }
+  .toolbar { gap: 0.6rem; }
+  .search { min-width: 0; flex-basis: 100%; max-width: none; }
+  .tabs { scrollbar-width: none; margin-right: -1rem; padding-right: 1rem; }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .form { max-width: none; }
+  .form-actions .btn { flex: 1 1 auto; }
+  .compose-actions .btn-primary { flex: 1 1 auto; }
+  .dialog { padding: 1.1rem; }
+}
+
+/* Phones: tables become stacked rows, nothing scrolls sideways */
+@media (max-width: 640px) {
+  .table-wrap { overflow: visible; }
+  .table-wrap table, .table-wrap tbody, .table-wrap tr, .table-wrap td { display: block; width: 100%; }
+  .table-wrap thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .table-wrap tbody tr { padding: 0.85rem 1rem; border-bottom: 1px solid var(--line); }
+  .table-wrap tbody tr:last-child { border-bottom: 0; }
+  .table-wrap td { padding: 0.12rem 0; border: 0; }
+  .table-wrap td[data-label]::before { content: attr(data-label) ": "; color: var(--muted); font-size: 0.8125rem; font-weight: 650; }
+  .table-wrap td.clip { max-width: none; white-space: normal; overflow: visible; }
+  .table-wrap td.actions { display: flex; flex-wrap: wrap; gap: 0.4rem; text-align: left; margin-top: 0.5rem; }
+  .table-wrap td.actions:empty { display: none; }
+
+  .page-head h1 { font-size: 1.75rem; }
+  .hero h1 { font-size: clamp(2.5rem, 13vw, 3.4rem); }
+  .landing-foot { flex-direction: column; }
+  .sweep { padding: 1rem; }
+  .sweep-controls { width: 100%; }
+  .sweep-controls select { flex: 1; }
+  .dialog-actions { flex-direction: column-reverse; }
+  .dialog-actions .btn { width: 100%; }
+  .grid-2 .field { margin-bottom: 1rem; }
+}
+
+/* Touch screens: comfortable tap targets */
+@media (pointer: coarse) {
+  .btn { min-height: 42px; }
+  .btn-sm { min-height: 40px; padding-left: 0.8rem; padding-right: 0.8rem; }
+  .btn-icon, .btn-icon.btn-sm { min-width: 42px; min-height: 42px; }
+  .nav-link { padding-top: 0.65rem; padding-bottom: 0.65rem; }
+  .tab { padding-top: 0.7rem; padding-bottom: 0.75rem; }
+  .segmented button { padding-top: 0.6rem; padding-bottom: 0.6rem; }
+  .msg { padding-top: 0.85rem; padding-bottom: 0.85rem; }
+  .prio-actions .btn { min-width: 40px; }
+  .chip button, .block-chip button { padding: 0.35rem 0.6rem; }
+  .editor-bar button, .block-add { min-height: 38px; }
+  .toggle .track { width: 46px; height: 26px; }
+  .toggle .track::after { width: 20px; height: 20px; }
+  .toggle input:checked + .track::after { transform: translateX(20px); }
+  .check, .option { min-height: 44px; }
+}

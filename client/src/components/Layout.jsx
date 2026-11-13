@@ -32,6 +32,13 @@ export default function Layout({ children }) {
   const [counts, setCounts] = useState(null);
   const loc = useLocation();
   useEffect(() => setOpen(false), [loc.pathname]);
+  useEffect(() => {
+    if (!open) return undefined;
+    const onKey = (e) => e.key === 'Escape' && setOpen(false);
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = ''; window.removeEventListener('keydown', onKey); };
+  }, [open]);
 
   // Live counts beside the nav items; refreshed on every page change, failures stay silent
   useEffect(() => {
@@ -77,7 +84,7 @@ export default function Layout({ children }) {
       {open && <div className="scrim" onClick={() => setOpen(false)} />}
       <div className="main">
         <header className="mobilebar">
-          <button className="btn btn-icon" onClick={() => setOpen(true)} aria-label="Open navigation"><Icon name="menu" /></button>
+          <button className="btn btn-icon" onClick={() => setOpen(true)} aria-label="Open navigation" aria-expanded={open}><Icon name="menu" /></button>
           <span className="brand"><BrandMark size={24} />MailPilot</span>
         </header>
         <main className="content">{children}</main>

@@ -36,7 +36,7 @@ export default function Scheduled() {
               <tr key={m._id}>
                 <td>{m.to}</td>
                 <td className="clip">{m.subject}</td>
-                <td className="nowrap">{fmtFull(m.status === 'sent' && m.sentAt ? m.sentAt : m.sendAt)}</td>
+                <td className="nowrap" data-label="Send time">{fmtFull(m.status === 'sent' && m.sentAt ? m.sentAt : m.sendAt)}</td>
                 <td><Badge tone={tone} dot>{label}</Badge>{m.status === 'failed' && m.error && <div className="small muted" style={{ maxWidth: 260 }}>{m.error}</div>}</td>
                 <td className="actions">{m.status === 'pending' && <button className="btn btn-sm" onClick={() => cancel(m)}>Cancel</button>}</td>
               </tr>

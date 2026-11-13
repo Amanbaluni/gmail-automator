@@ -40,6 +40,7 @@ const PATHS = {
   filter: <><path d="M22 3H2l8 9.5V19l4 2v-8.5z" /></>,
   refresh: <><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16M3 12A9 9 0 0 1 18.5 5.8L21 8M21 3v5h-5M3 21v-5h5" /></>,
   logout: <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /></>,
+  back: <><path d="M19 12H5m6-6-6 6 6 6" /></>,
   chevronDown: <><path d="m6 9 6 6 6-6" /></>,
   zap: <><path d="M13 2 3 14h9l-1 8 10-12h-9z" /></>,
   calendar: <><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></>,

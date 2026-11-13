@@ -71,8 +71,8 @@ export default function Cleaner() {
             <tbody>{rows.map((r) => (
               <tr key={r.email}>
                 <td><b>{r.name}</b><div className="muted small">{r.email}</div></td>
-                <td className="num">{r.count}{r.unread ? <span className="muted small"> · {r.unread} unread</span> : null}</td>
-                <td className="clip">{r.sample}</td>
+                <td className="num" data-label="Emails">{r.count}{r.unread ? <span className="muted small"> · {r.unread} unread</span> : null}</td>
+                <td className="clip" data-label="Latest subject">{r.sample}</td>
                 <td className="actions">
                   <button className="btn btn-sm" disabled={!!busy} onClick={() => bulk(r, 'archive')}>Archive</button>{' '}
                   <button className="btn btn-sm" disabled={!!busy} onClick={() => bulk(r, 'read')}>Mark read</button>{' '}
