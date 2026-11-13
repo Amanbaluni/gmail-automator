@@ -57,10 +57,14 @@ export function Icon({ name, size = 18, strokeWidth = 1.75, className, style }) 
   );
 }
 
+// Mark: a ranked list (long bar first, short bar last) on postal yellow
 export const BrandMark = ({ size = 28 }) => (
-  <span className="brand-mark" style={{ width: size, height: size }}>
-    <Icon name="mail" size={Math.round(size * 0.62)} strokeWidth={2} />
-  </span>
+  <svg className="brand-mark" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
+    <rect width="32" height="32" rx="4" fill="#f5c400" />
+    <rect x="6" y="8" width="20" height="4" fill="#1d2024" />
+    <rect x="6" y="14" width="14" height="4" fill="#1d2024" />
+    <rect x="6" y="20" width="8" height="4" fill="#1d2024" />
+  </svg>
 );
 
 export const GoogleG = () => (

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api.js';
 import { Icon } from '../icons.jsx';
-import { ACTIVITY_TYPES, Badge, ListSkeleton, Notice, PageHeader, plural, timeAgo, fmtFull, useToast } from '../ui.jsx';
+import { ACTIVITY_TYPES, Badge, ListSkeleton, PageHeader, plural, timeAgo, useToast } from '../ui.jsx';
 
 export default function Dashboard() {
   const [s, setS] = useState(null);
@@ -22,49 +22,51 @@ export default function Dashboard() {
     } catch (e) { toast(e.message, 'error'); } finally { setRunning(false); }
   };
 
-  if (!s) return <><PageHeader title="Dashboard" /><div className="stats">{[0, 1, 2, 3].map((i) => <div key={i} className="card stat"><div className="skeleton" style={{ width: '50%' }} /><div className="skeleton" style={{ width: '30%', height: 28, marginTop: 10 }} /></div>)}</div><ListSkeleton rows={3} /></>;
+  if (!s) return <><PageHeader title="Dashboard" /><div className="sweep" style={{ minHeight: 84 }} /><div className="counters">{[0, 1, 2, 3].map((i) => <div key={i} className="counter"><div className="skeleton" style={{ width: '50%', height: 38 }} /><div className="skeleton" style={{ width: '40%' }} /></div>)}</div><ListSkeleton rows={3} /></>;
   const max = Math.max(1, ...s.days.map((d) => d.count));
   const week = s.days.reduce((n, d) => n + d.count, 0);
+  const on = s.automationEnabled;
 
   return (
     <>
-      <PageHeader title="Dashboard">A quick look at your mailbox and what your automation has done lately.</PageHeader>
+      <PageHeader title="Dashboard">Your mailbox and what automation has done lately.</PageHeader>
 
-      {!s.automationEnabled && (
-        <Notice tone="warn" title="Automation is paused" action={<Link className="btn btn-sm" to="/settings">Turn on</Link>}>
-          Rules and the auto-responder won’t run until you turn automation back on.
-        </Notice>
-      )}
-
-      <div className="stats">
-        <Link to="/inbox" className="card stat" style={{ color: 'inherit', textDecoration: 'none' }}><span>Inbox</span><b>{s.inbox?.total?.toLocaleString() ?? '—'}</b></Link>
-        <Link to="/priority" className="card stat" style={{ color: 'inherit', textDecoration: 'none' }}><span>Unread · view by priority</span><b>{s.inbox?.unread?.toLocaleString() ?? '—'}</b></Link>
-        <Link to="/rules" className="card stat" style={{ color: 'inherit', textDecoration: 'none' }}><span>Active rules</span><b>{s.rulesActive}<small> of {s.rulesTotal}</small></b></Link>
-        <Link to="/scheduled" className="card stat" style={{ color: 'inherit', textDecoration: 'none' }}><span>Waiting to send</span><b>{s.scheduled}</b></Link>
+      <div className="sweep">
+        <div className="sweep-state">
+          <span className={`led ${on ? 'on' : 'paused'}`} />
+          <div>
+            <b>{on ? 'Automation is running' : 'Automation is paused'}</b>
+            <span>{on ? `Last checked ${s.lastRunAt ? timeAgo(s.lastRunAt).toLowerCase() : 'never'}. Rules and auto-replies apply to new mail.` : 'Rules and the auto-responder won’t run until you turn it back on.'}</span>
+          </div>
+        </div>
+        <div className="sweep-controls">
+          {on ? (
+            <>
+              <select aria-label="How far back to check" value={hours} onChange={(e) => setHours(e.target.value)}>
+                <option value={1}>Last hour</option><option value={24}>Last 24 hours</option>
+                <option value={72}>Last 3 days</option><option value={168}>Last 7 days</option>
+              </select>
+              <button className="btn btn-primary" onClick={run} disabled={running}><Icon name="zap" size={15} />{running ? 'Checking…' : 'Check now'}</button>
+            </>
+          ) : <Link className="btn btn-primary" to="/settings">Turn on</Link>}
+        </div>
       </div>
 
-      <div className="card">
-        <div className="card-head"><h3>Check mail now</h3><Badge tone={s.automationEnabled ? 'ok' : 'warn'} dot>{s.automationEnabled ? 'Automation on' : 'Paused'}</Badge></div>
-        <p className="muted small" style={{ marginBottom: '0.9rem' }}>
-          Applies your rules and auto-responder to recent mail straight away, instead of waiting for the next automatic check. Last checked: {fmtFull(s.lastRunAt)}.
-        </p>
-        <div className="row wrap tight">
-          <select aria-label="How far back to check" value={hours} onChange={(e) => setHours(e.target.value)} style={{ width: 'auto' }}>
-            <option value={1}>Last hour</option><option value={24}>Last 24 hours</option>
-            <option value={72}>Last 3 days</option><option value={168}>Last 7 days</option>
-          </select>
-          <button className="btn btn-primary" onClick={run} disabled={running}><Icon name="zap" size={15} />{running ? 'Checking…' : 'Check now'}</button>
-        </div>
+      <div className="counters">
+        <Link to="/inbox" className="counter"><b>{s.inbox?.total?.toLocaleString() ?? '–'}</b><span>In inbox</span></Link>
+        <Link to="/priority" className={`counter${s.inbox?.unread ? ' alert' : ''}`}><b>{s.inbox?.unread?.toLocaleString() ?? '–'}</b><span>Unread <em>· rank them</em></span></Link>
+        <Link to="/rules" className="counter"><b>{s.rulesActive}<small>/ {s.rulesTotal}</small></b><span>Rules active</span></Link>
+        <Link to="/scheduled" className="counter"><b>{s.scheduled}</b><span>Waiting to send</span></Link>
       </div>
 
       <div className="grid-2">
         <div className="card">
-          <div className="card-head"><h3>Automated actions</h3><span className="muted small">{plural(week, 'action')} in the last 7 days</span></div>
+          <div className="card-head"><h3>Automated actions</h3><span className="muted small">{plural(week, 'action')} in 7 days</span></div>
           <div className="bars" role="img" aria-label={`Actions per day: ${s.days.map((d) => d.count).join(', ')}`}>
-            {s.days.map((d) => (
+            {s.days.map((d, i) => (
               <div key={d.date} className="bar-col" title={`${d.date}: ${plural(d.count, 'action')}`}>
                 <span className="bar-val">{d.count || ''}</span>
-                <div className={`bar${d.count ? '' : ' zero'}`} style={{ height: `${Math.max(2, (d.count / max) * 100)}%` }} />
+                <div className={`bar${d.count ? '' : ' zero'}${i === s.days.length - 1 && d.count ? ' today' : ''}`} style={{ height: `${Math.max(2, (d.count / max) * 100)}%` }} />
                 <small>{new Date(d.date + 'T00:00:00Z').toLocaleDateString([], { weekday: 'short', timeZone: 'UTC' })}</small>
               </div>
             ))}
