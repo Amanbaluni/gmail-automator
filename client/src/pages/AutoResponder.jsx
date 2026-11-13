@@ -4,7 +4,10 @@ import { api } from '../api.js';
 import { Icon } from '../icons.jsx';
 import { Badge, Empty, ListSkeleton, Notice, PageHeader, Toggle, fmtFull, useConfirm, useToast } from '../ui.jsx';
 
-const PLACEHOLDERS = [['{{sender_name}}', 'Sender’s name'], ['{{sender_email}}', 'Sender’s address'], ['{{subject}}', 'Original subject']];
+// Stored as {{token}} so the server keeps working; shown to people as [Friendly label]
+const PLACEHOLDERS = [['{{sender_name}}', 'Sender name'], ['{{sender_email}}', 'Sender email'], ['{{subject}}', 'Original subject']];
+const toView = (t) => PLACEHOLDERS.reduce((x, [raw, n]) => x.split(raw).join(`[${n}]`), t || '');
+const toRaw = (t) => PLACEHOLDERS.reduce((x, [raw, n]) => x.split(`[${n}]`).join(raw), t || '');
 const COOLDOWNS = [[1, 'Once a day'], [2, 'Every 2 days'], [4, 'Every 4 days (recommended)'], [7, 'Once a week'], [14, 'Every 2 weeks'], [30, 'Once a month']];
 
 const pad = (n) => String(n).padStart(2, '0');
@@ -23,6 +26,69 @@ function insertAt(el, text, value, set) {
   const a = el.selectionStart ?? value.length, b = el.selectionEnd ?? value.length;
   set(value.slice(0, a) + text + value.slice(b));
   requestAnimationFrame(() => { el.focus(); el.setSelectionRange(a + text.length, a + text.length); });
+}
+
+function MessageBox({ id, value, onChange, bodyRef, rows = 8, required, placeholder }) {
+  const insert = (n) => insertAt(bodyRef.current, `[${n}]`, toView(value), (v) => onChange(toRaw(v)));
+  return (
+    <>
+      <div className="editor">
+        <div className="editor-bar">
+          <span>Insert</span>
+          {PLACEHOLDERS.map(([, n]) => <button type="button" key={n} onClick={() => insert(n)}>{n}</button>)}
+        </div>
+        <textarea id={id} ref={bodyRef} rows={rows} required={required} value={toView(value)} onChange={(e) => onChange(toRaw(e.target.value))} placeholder={placeholder} />
+      </div>
+      <span className="hint">Anything in [brackets] is replaced with that person’s details when the reply is sent.</span>
+    </>
+  );
+}
+
+const EMAIL_RE = /^[^\s@,]+@[^\s@,]+\.[^\s@,]+$/;
+const DOMAIN_RE = /^(?!-)[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/;
+
+// Comma-separated string in, comma-separated string out, so the saved format is unchanged
+function SenderList({ value, onChange }) {
+  const items = (value || '').split(',').map((x) => x.trim()).filter(Boolean);
+  const [adding, setAdding] = useState(false);
+  const [draft, setDraft] = useState('');
+  const [error, setError] = useState('');
+  const commit = (list) => onChange(list.join(', '));
+  const close = () => { setAdding(false); setDraft(''); setError(''); };
+  const add = () => {
+    const v = draft.trim().toLowerCase().replace(/^@/, '');
+    if (!v) return close();
+    if (!EMAIL_RE.test(v) && !DOMAIN_RE.test(v)) return setError('Enter an email address like sam@example.com or a domain like example.com.');
+    if (items.includes(v)) return setError(`${v} is already on the list.`);
+    commit([...items, v]);
+    setDraft(''); setError('');
+  };
+  return (
+    <div className="field">
+      <span className="label" id="blocklist-label">Never reply to these senders</span>
+      <div className="blocklist" role="group" aria-labelledby="blocklist-label">
+        {items.map((i) => (
+          <span key={i} className="block-chip"><span>{i}</span>
+            <button type="button" aria-label={`Remove ${i}`} onClick={() => commit(items.filter((x) => x !== i))}>×</button>
+          </span>
+        ))}
+        {items.length === 0 && !adding && <span className="blocklist-empty">No one blocked yet</span>}
+        {adding ? (
+          <span className="block-add-row">
+            <input autoFocus value={draft} aria-label="Address or domain to block" placeholder="sam@example.com or example.com"
+              onChange={(e) => { setDraft(e.target.value); setError(''); }}
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); add(); } if (e.key === 'Escape') { e.preventDefault(); close(); } }} />
+            <button type="button" className="btn btn-sm btn-primary" onClick={add}>Add</button>
+            <button type="button" className="btn btn-sm btn-ghost" onClick={close}>Done</button>
+          </span>
+        ) : (
+          <button type="button" className="block-add" onClick={() => setAdding(true)}><span aria-hidden="true">+</span> Add address or domain</button>
+        )}
+      </div>
+      {error && <span className="hint field-error" role="alert">{error}</span>}
+      <span className="hint">Block a single address or a whole domain. Newsletters and no-reply addresses are always skipped.</span>
+    </div>
+  );
 }
 
 function statusOf(f) {
@@ -89,12 +155,8 @@ function OutOfOffice({ f, setF, templates, onSaved }) {
             </select>
           )}
         </div>
-        <textarea id="ar-body" ref={bodyRef} rows={9} value={f.body} onChange={set('body')}
-          placeholder={'Hi {{sender_name}},\n\nThanks for your message. I’m away until Monday and will reply when I’m back.\n\nBest regards'} />
-        <div className="placeholders">
-          <span className="hint">Insert:</span>
-          {PLACEHOLDERS.map(([p, n]) => <button type="button" key={p} title={n} onClick={() => insertAt(bodyRef.current, p, f.body, (v) => setF({ ...f, body: v }))}>{p}</button>)}
-        </div>
+        <MessageBox id="ar-body" bodyRef={bodyRef} value={f.body} onChange={(v) => setF({ ...f, body: v })}
+          placeholder={'Hi [Sender name],\n\nThanks for your message. I’m away until Monday and will reply when I’m back.\n\nBest regards'} />
       </div>
 
       <fieldset>
@@ -103,10 +165,11 @@ function OutOfOffice({ f, setF, templates, onSaved }) {
           <select value={f.cooldownDays} onChange={(e) => setF({ ...f, cooldownDays: Number(e.target.value) })} style={{ maxWidth: 300 }}>
             {COOLDOWNS.map(([d, n]) => <option key={d} value={d}>{n}</option>)}
           </select></label>
-        <label className="check"><input type="checkbox" checked={f.onlyDirect} onChange={set('onlyDirect')} />Only reply to mail sent directly to me (skip Cc and mailing lists)</label>
-        <label className="field"><span>Never reply to these senders</span>
-          <textarea rows={2} value={f.skipSenders} onChange={set('skipSenders')} placeholder="family@example.com, mycompany.com" />
-          <span className="hint">Separate addresses or whole domains with commas. Newsletters and no-reply addresses are always skipped.</span></label>
+        <label className="option">
+          <input type="checkbox" checked={f.onlyDirect} onChange={set('onlyDirect')} />
+          <span className="option-text"><b>Only reply to mail sent directly to me</b><small>Skips messages where you are only on Cc or part of a mailing list.</small></span>
+        </label>
+        <SenderList value={f.skipSenders} onChange={(v) => setF({ ...f, skipSenders: v })} />
       </fieldset>
 
       <div className="form-actions"><button className="btn btn-primary" disabled={saving}>{saving ? 'Saving…' : 'Save changes'}</button></div>
@@ -152,10 +215,7 @@ function Templates({ templates, reload, onUse }) {
           <label className="field"><span>Subject <span className="hint">(optional, used when composing)</span></span><input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} maxLength={200} /></label>
           <div className="field">
             <label htmlFor="tpl-body" className="label">Message</label>
-            <textarea id="tpl-body" ref={bodyRef} rows={8} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} required />
-            <div className="placeholders"><span className="hint">Insert:</span>
-              {PLACEHOLDERS.map(([p, n]) => <button type="button" key={p} title={n} onClick={() => insertAt(bodyRef.current, p, form.body, (v) => setForm({ ...form, body: v }))}>{p}</button>)}
-            </div>
+            <MessageBox id="tpl-body" bodyRef={bodyRef} value={form.body} onChange={(v) => setForm({ ...form, body: v })} required />
           </div>
           <div className="form-actions">
             <button className="btn btn-primary" disabled={saving}>{saving ? 'Saving…' : 'Save template'}</button>
