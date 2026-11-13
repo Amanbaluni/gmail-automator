@@ -1,124 +1,55 @@
 /* ==========================================================================
-   Responsive: tablet and phone adjustments (must load last)
+   Responsive (loads last)
    ========================================================================== */
 
 @media (max-width: 1100px) {
-  .stats {
-    grid-template-columns: 1fr 1fr;
-  }
+  .counters { grid-template-columns: 1fr 1fr; }
+  .counter:nth-child(2) { border-right: 0; }
+  .counter:nth-child(-n + 2) { border-bottom: 1px solid var(--line); }
+  .hero { grid-template-columns: 1fr; gap: 2.5rem; }
 }
 
 @media (max-width: 860px) {
-  /* Sidebar becomes a slide-in drawer */
-  .app {
-    grid-template-columns: 1fr;
-  }
+  .app { grid-template-columns: 1fr; }
 
-  .sidebar {
-    position: fixed;
-    inset: 0 auto 0 0;
-    width: 260px;
-    z-index: 80;
-    transform: translateX(-100%);
-    transition: transform 0.2s ease;
-    box-shadow: var(--shadow-pop);
-  }
+  /* The rail becomes a drawer */
+  .sidebar { position: fixed; inset: 0 auto 0 0; width: 264px; z-index: 80; transform: translateX(-100%); transition: transform 0.2s ease; }
+  .sidebar.open { transform: none; box-shadow: var(--shadow-pop); }
+  .scrim { display: block; position: fixed; inset: 0; background: rgba(12, 14, 16, 0.55); z-index: 70; }
 
-  .sidebar.open {
-    transform: none;
-  }
+  .mobilebar { display: flex; align-items: center; gap: 0.6rem; position: sticky; top: 0; z-index: 20; background: var(--ink); color: var(--on-ink); padding: 0.5rem 0.75rem; }
+  .mobilebar .btn { background: transparent; border-color: transparent; color: var(--on-ink); }
+  .mobilebar .brand { padding: 0; font-size: 1.3rem; }
 
-  .scrim {
-    position: fixed;
-    inset: 0;
-    background: rgba(8, 12, 20, 0.45);
-    z-index: 70;
-  }
+  .content { padding: 1.25rem 1rem 3rem; }
+  h1 { font-size: 1.9rem; }
+  .page-head { margin-bottom: 1.1rem; }
 
-  .topbar {
-    padding: 0.5rem 1rem;
-  }
+  .grid-2, .split, .how ol { grid-template-columns: 1fr; }
+  .detail { position: static; }
+  .ledger .entry { grid-template-columns: 1fr; gap: 0.3rem; }
 
-  .topbar .menu-btn {
-    display: inline-flex;
-  }
+  .msg { grid-template-columns: 10px minmax(0, 1fr) auto; }
+  .msg .subj { grid-column: 2 / -1; grid-row: 2; }
+  .prio { grid-template-columns: 52px minmax(0, 1fr); }
+  .prio-actions { grid-column: 2; padding: 0 0.6rem 0.5rem; }
+  .prio-subject, .prio-snippet { white-space: normal; }
 
-  .topbar .user-email {
-    display: none;
-  }
+  .compose-row { grid-template-columns: 1fr; gap: 0.2rem; }
+  .compose-row > .label { padding-top: 0; }
+  .rule { grid-template-columns: 1fr; }
 
-  .content {
-    padding: 1.25rem 1rem 3rem;
-  }
-
-  .grid-2,
-  .split,
-  .features {
-    grid-template-columns: 1fr;
-  }
-
-  .detail {
-    position: static;
-  }
-
-  /* Message rows stack subject under sender */
-  .msg {
-    grid-template-columns: 8px minmax(0, 1fr) auto;
-  }
-
-  .msg .subj {
-    grid-column: 2 / -1;
-    grid-row: 2;
-  }
-
-  .prio {
-    grid-template-columns: 40px minmax(0, 1fr);
-  }
-
-  .prio-actions {
-    grid-column: 2;
-    opacity: 1;
-  }
-
-  .rule {
-    grid-template-columns: 1fr;
-  }
-
-  .compose-row {
-    grid-template-columns: 1fr;
-    gap: 0.15rem;
-  }
-
-  .compose-row > .label {
-    padding-top: 0;
-  }
-
-  .hero {
-    padding: 3rem 0 2.5rem;
-  }
-
-  .hero h1 {
-    font-size: 1.9rem;
-  }
+  .landing { padding: 0 1.1rem 2rem; }
+  .hero { padding-top: 1rem; }
+  .sorter { --row: 112px; }
 }
 
 @media (max-width: 520px) {
-  .stats {
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-  }
-
-  .checks {
-    grid-template-columns: 1fr;
-  }
-
-  .toasts {
-    left: 1rem;
-    right: 1rem;
-    bottom: 1rem;
-  }
-
-  .toast {
-    width: 100%;
-  }
+  .counter b { font-size: 2.4rem; }
+  .counter { padding: 0.8rem 0.9rem; }
+  .sweep-state b { font-size: 1.25rem; }
+  .plain li { grid-template-columns: 1fr auto; }
+  .plain li .badge { grid-column: 1 / -1; justify-self: start; }
+  .toasts { left: 0.75rem; right: 0.75rem; bottom: 0.75rem; max-width: none; }
+  td, th { padding-left: 0.7rem; padding-right: 0.7rem; }
 }

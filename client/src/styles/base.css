@@ -1,196 +1,140 @@
 /* ==========================================================================
-   Base: design tokens (light + dark), reset, typography, utilities
+   Base: tokens (light + dark), reset, type, utilities
+   Concept: a mail-sorting desk. Concrete page, paper panels, charcoal rail,
+   one hi-vis yellow reserved for the thing you do next.
    ========================================================================== */
 
 :root {
   color-scheme: light;
 
-  /* Surfaces */
-  --bg: #f6f7f9;
-  --surface: #ffffff;
-  --surface-2: #f1f3f6;
-  --surface-hover: #f4f6f9;
+  --bg: #e3e5df;
+  --surface: #f4f4ef;
+  --surface-2: #eaebe4;
+  --surface-hover: #eeefe8;
 
-  /* Text */
-  --text: #0f1729;
-  --text-2: #3b4559;
-  --muted: #647084;
+  --text: #1d2024;
+  --text-2: #3d434b;
+  --muted: #646b74;
 
-  /* Borders */
-  --line: #e3e7ed;
-  --line-strong: #cfd5de;
+  --line: #d1d4cb;
+  --line-strong: #b4b8ad;
 
-  /* Brand */
-  --brand: #1d5bd6;          /* text / links / icons */
-  --brand-solid: #1d5bd6;    /* button fills */
-  --brand-solid-hover: #1a4eb8;
-  --brand-soft: #e9f0fc;
-  --on-brand: #ffffff;
-  --focus: rgba(29, 91, 214, 0.35);
+  --ink: #23272c;          /* rail, bars, heavy rules */
+  --on-ink: #edeee8;
+  --ink-line: #3a4046;
 
-  /* Status */
-  --ok: #157f45;       --ok-soft: #e4f5ec;
-  --warn: #9a5b00;     --warn-soft: #fdf1d9;
-  --danger: #c4281c;   --danger-soft: #fdeceb;
-  --info: #1d5bd6;     --info-soft: #e9f0fc;
-  --neutral-soft: #eceff3;
+  --accent: #f5c400;       /* postal yellow: primary action + current location */
+  --accent-hover: #ffd21f;
+  --accent-edge: #1d2024;
+  --on-accent: #1d2024;
 
-  /* Shape and depth */
-  --radius: 8px;
-  --radius-sm: 6px;
-  --shadow-sm: 0 1px 2px rgba(15, 23, 41, 0.05);
-  --shadow-pop: 0 8px 24px rgba(15, 23, 41, 0.12), 0 0 0 1px rgba(15, 23, 41, 0.06);
+  --brand: #1f4fa3;        /* links only */
+  --focus: #1d2024;
 
-  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --ok: #17703f;      --ok-soft: #dbebdd;
+  --warn: #8a5200;    --warn-soft: #f4e5bd;
+  --danger: #c42619;  --danger-soft: #f6d9d3;
+  --info: #1f4fa3;    --info-soft: #dbe4f2;
+  --neutral-soft: #e2e4dc;
+
+  --radius: 5px;
+  --radius-sm: 4px;
+  --shadow-pop: 0 10px 30px rgba(20, 22, 25, 0.22), 0 0 0 1px rgba(20, 22, 25, 0.18);
+
+  --font: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --bg: #0e1218;
-  --surface: #151a22;
-  --surface-2: #1b212b;
-  --surface-hover: #1a202a;
+  --bg: #121416;
+  --surface: #1b1e22;
+  --surface-2: #23272c;
+  --surface-hover: #20242a;
 
-  --text: #e8ecf2;
-  --text-2: #c3cad6;
-  --muted: #8b96a8;
+  --text: #ecede7;
+  --text-2: #c5c8c0;
+  --muted: #8f959c;
 
-  --line: #252d39;
-  --line-strong: #323c4b;
+  --line: #2c3137;
+  --line-strong: #3f464e;
 
-  --brand: #6ea4ff;
-  --brand-solid: #2f6fe0;
-  --brand-solid-hover: #3b7bee;
-  --brand-soft: #1a2a45;
-  --on-brand: #ffffff;
-  --focus: rgba(110, 164, 255, 0.45);
+  --ink: #0c0d0f;
+  --on-ink: #e6e7e1;
+  --ink-line: #262b30;
 
-  --ok: #4cc382;       --ok-soft: #12291e;
-  --warn: #e8b04a;     --warn-soft: #2e2410;
-  --danger: #f27b72;   --danger-soft: #331a18;
-  --info: #6ea4ff;     --info-soft: #1a2a45;
-  --neutral-soft: #212935;
+  --accent-edge: #f5c400;
+  --brand: #8db2f2;
+  --focus: #f5c400;
 
-  --shadow-sm: none;
-  --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px #2a3341;
+  --ok: #55c58a;      --ok-soft: #14291d;
+  --warn: #e6b04a;    --warn-soft: #2e2410;
+  --danger: #f0786c;  --danger-soft: #341a17;
+  --info: #8db2f2;    --info-soft: #19263d;
+  --neutral-soft: #262b31;
+
+  --shadow-pop: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 0 1px #343a42;
 }
 
-/* ---- Reset ---- */
 *,
 *::before,
-*::after {
-  box-sizing: border-box;
-}
+*::after { box-sizing: border-box; }
 
-html {
-  -webkit-text-size-adjust: 100%;
-}
+html { -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
-  font: 14px/1.5 var(--font);
+  font: 400 14px/1.5 var(--font);
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  font-feature-settings: "cv11", "ss01";
 }
 
-/* ---- Typography ---- */
-h1,
-h2,
-h3 {
+/* Headings are condensed and heavy: they read like a dispatch board, not a brochure */
+h1, h2, h3 {
   margin: 0;
-  letter-spacing: -0.011em;
   color: var(--text);
+  font-stretch: 78%;
+  font-variation-settings: "wdth" 78;
+  line-height: 1.1;
 }
+h1 { font-size: 2.25rem; font-weight: 800; letter-spacing: -0.01em; }
+h2 { font-size: 1.35rem; font-weight: 750; }
+h3 { font-size: 1.05rem; font-weight: 750; }
 
-h1 {
-  font-size: 1.5rem;
-  line-height: 1.25;
-  font-weight: 650;
-}
+p { margin: 0 0 0.75rem; }
 
-h2 {
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-
-h3 {
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-p {
-  margin: 0 0 0.75rem;
-}
-
-a {
-  color: var(--brand);
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
+a { color: var(--brand); text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
 
 code {
   font-family: var(--mono);
   background: var(--surface-2);
   border: 1px solid var(--line);
   padding: 0 5px;
-  border-radius: 4px;
+  border-radius: 3px;
   font-size: 0.85em;
 }
 
-::selection {
-  background: var(--brand-soft);
-}
+::selection { background: var(--accent); color: var(--on-accent); }
 
-:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 /* ---- Utilities ---- */
-.muted {
-  color: var(--muted);
-}
-
-.small {
-  font-size: 0.8125rem;
-}
-
-.nowrap {
-  white-space: nowrap;
-}
-
-.grow {
-  flex: 1;
-  min-width: 0;
-}
-
-.num {
-  font-variant-numeric: tabular-nums;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
+.muted { color: var(--muted); }
+.small { font-size: 0.8125rem; }
+.nowrap { white-space: nowrap; }
+.grow { flex: 1; min-width: 0; }
+.num { font-variant-numeric: tabular-nums; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
   }
 }
